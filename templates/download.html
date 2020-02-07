@@ -10,14 +10,24 @@
     <script src="/public/javascripts/qrcode/jquery.min.js"></script>
     <script type="text/javascript" src="/public/javascripts/qrcode/jquery.qrcode.js"></script>
     <script type="text/javascript" src="/public/javascripts/qrcode/qrcode.js"></script>
-    <title>ios ipa server</title>
+    <title>loona ios ipa server</title>
 </head>
 <body>
-    <h3>【微信扫描此页面不能显示】，请点击右上角“在Safari中打开”</h3>
+    <h3>Open <a href='https://{{ip}}:{{port}}/download'>https://{{ip}}:{{port}}/download</a> in mobile Safari or scan QR code below:</h3>
     <div id="qrcodeTable"></div>
+    <p>
+		Before first install you should <a id='cer' href="https://{{ip}}:{{port}}/cer/myCA.cer"><b>Donwload</b></a>, <b>Install</b> and <b>Trust</b> our self signed Certificates<br/>
+		<br/>
+		For <b>Install</b> - go to the:<br/> Settings > General > Profile > ios-ipa-server... > [Install]
+		<br/><br/>
+		For <b>Trust</b> - go to the:<br/> Settings > About > Certificate Trust Settings > ios-ipa-server... > [check]
+		<br/>
+    </p>
+	</hr>
     <h3>
-        <a id='cer' href="https://{{ip}}:{{port}}/cer/myCA.cer">如果出现【无法验证服务器身份】或【无法连接到】，请点击此链接安装证书</a>
+        IPA LIST:
     </h3>
+	</hr>
     <ul>
         {{#items}}
         <li>
@@ -27,7 +37,7 @@
         		<div class="desc">{{description}}</div>
         		<div class="desc">{{timeString}}</div>
         	</div>
-            <a href="javascript:;" downloadUrl="itms-services://?action=download-manifest&url=https://{{ip}}:{{port}}/plist/{{encodedName}}" class="link">下载</a>
+            <a href="itms-services://?action=download-manifest&url=https://{{ip}}:{{port}}/plist/{{encodedName}}" class="link">Install</a>
         </li>
         <hr/>
         {{/items}}
@@ -38,11 +48,6 @@
     		render	: "table",
     		text	: url
     	});
-    	$('.link').click(function(){
-            if(confirm("点击安装后会自动下载app, 请返回桌面查看")){
-                window.location.href = $(this).attr('downloadUrl');
-            }
-        });
     </script>
 </body>
 </html>

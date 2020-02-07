@@ -206,27 +206,38 @@ function itemInfoWithName(name, ipasDir) {
   }
   var ipa = new AdmZip(location);
   var ipaEntries = ipa.getEntries();
+  var icon_s = ipasDir + '/icon_s.png';
+  
   var tmpIn = ipasDir + '/icon.png';
   var tmpOut = ipasDir + '/icon_tmp.png';
-  try {
-    ipaEntries.forEach(function(ipaEntry) {
-      if (ipaEntry.entryName.indexOf('AppIcon60x60@3x.png') != -1) {
-        var buffer = new Buffer(ipaEntry.getData());
-        if (buffer.length) {
-          fs.writeFileSync(tmpIn, buffer);
-          var result = exec(path.join(__dirname, '..', exeName + ' -s _tmp ') + ' ' + tmpIn).output;
-          iconString = 'data:image/png;base64,' + base64_encode(tmpOut);
-        }
-      }
-    });
-  } catch (e) {
-    if (e) {
-      var imageBase64 = fs.readFileSync(tmpIn).toString("base64");
-      iconString = 'data:image/png;base64,' + imageBase64;
-    }
+  
+  var imageBase64 = fs.readFileSync(icon_s).toString("base64");
+  
+  if (imageBase64) {
+	  iconString = 'data:image/png;base64,' + imageBase64;
+  } else {
+	  try {
+	    ipaEntries.forEach(function(ipaEntry) {
+	      if (ipaEntry.entryName.indexOf('AppIcon60x60@3x.png') != -1) {
+	        var buffer = new Buffer(ipaEntry.getData());
+	        if (buffer.length) {
+	          fs.writeFileSync(tmpIn, buffer);
+	          var result = exec(path.join(__dirname, '..', exeName + ' -s _tmp ') + ' ' + tmpIn).output;
+	          iconString = 'data:image/png;base64,' + base64_encode(tmpOut);
+	        }
+	      }
+	    });
+	  } catch (e) {
+	    if (e) {
+	      var imageBase64 = fs.readFileSync(tmpIn).toString("base64");
+	      iconString = 'data:image/png;base64,' + imageBase64;
+	    }
+	  }
+	  fs.removeSync(tmpIn);
+	  fs.removeSync(tmpOut);
   }
-  fs.removeSync(tmpIn);
-  fs.removeSync(tmpOut);
+  
+
   return {
     encodedName: base64.encode(name),
     name: name,
